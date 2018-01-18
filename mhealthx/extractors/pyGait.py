@@ -44,8 +44,12 @@ Authors:
 
 Copyright 2015,  Sage Bionetworks (http://sagebase.org), Apache v2.0 License
 """
+from __future__ import division
 
 
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 def walk_direction_attitude(ax, ay, az, uw, ux, uy, uz, plot_test=False):
     """
     Estimate local walk (not cardinal) directions by rotation with attitudes.
@@ -134,7 +138,7 @@ def walk_direction_attitude(ax, ay, az, uw, ux, uy, uz, plot_test=False):
 
 
 def walk_direction_preheel(ax, ay, az, t, sample_rate, 
-                           stride_fraction=1.0/8.0, threshold=0.5,
+                           stride_fraction=old_div(1.0,8.0), threshold=0.5,
                            order=4, cutoff=5, plot_test=False):
     """
     Estimate local walk (not cardinal) direction with pre-heel strike phase.
@@ -350,7 +354,7 @@ def project_walk_direction_attitude(ax, ay, az, uw, ux, uy, uz):
 
     directions = walk_direction_attitude(ax, ay, az, uw, ux, uy, uz)
 
-    vectors = project_axes(zip(ax, ay, az), directions)
+    vectors = project_axes(list(zip(ax, ay, az)), directions)
 
     px = [x[0] for x in vectors]
     py = [x[1] for x in vectors]
@@ -422,7 +426,7 @@ def project_walk_direction_preheel(ax, ay, az, t, sample_rate,
                                        stride_fraction, threshold, order,
                                        cutoff, False)
 
-    vectors = project_axes(zip(ax, ay, az), directions)
+    vectors = project_axes(list(zip(ax, ay, az)), directions)
 
     px = [x[0] for x in vectors]
     py = [x[1] for x in vectors]
@@ -524,14 +528,14 @@ def heel_strikes(data, sample_rate, threshold=0.2, order=4, cutoff=5,
     strike_indices_smooth = []
     filter_threshold = np.abs(threshold * np.max(filtered))
     for i in range(1, np.size(transitions)):
-        segment = range(transitions[i-1], transitions[i])
+        segment = list(range(transitions[i-1], transitions[i]))
         imax = np.argmax(filtered[segment])
         if filtered[segment[imax]] > filter_threshold:
             strike_indices_smooth.append(segment[imax])
 
     # Compute number of samples between peaks using the real part of the FFT:
     interpeak = compute_interpeak(data, sample_rate)
-    decel = np.int(interpeak / 2)
+    decel = np.int(old_div(interpeak, 2))
 
     # Find maximum peaks close to maximum peaks of smoothed data:
     strike_indices = []
@@ -563,7 +567,7 @@ def heel_strikes(data, sample_rate, threshold=0.2, order=4, cutoff=5,
 
     strikes = np.asarray(strike_indices)
     strikes -= strikes[0]
-    strikes = strikes / sample_rate
+    strikes = old_div(strikes, sample_rate)
 
     return strikes, strike_indices
 
@@ -728,7 +732,7 @@ def gait(strikes, data, duration, distance=None):
     sd_step_durations = np.std(step_durations)
 
     number_of_steps = np.size(strikes)
-    cadence = number_of_steps / duration
+    cadence = old_div(number_of_steps, duration)
 
     strides1 = strikes[0::2]
     strides2 = strikes[1::2]
@@ -748,17 +752,17 @@ def gait(strikes, data, duration, distance=None):
     sd_stride_durations = np.mean((np.std(stride_durations1),
                                    np.std(stride_durations2)))
 
-    step_period = 1 / avg_step_duration
-    stride_period = 1 / avg_stride_duration
+    step_period = old_div(1, avg_step_duration)
+    stride_period = old_div(1, avg_stride_duration)
 
     step_regularity, stride_regularity, symmetry = \
         gait_regularity_symmetry(data, step_period, stride_period)
 
     # Set distance-based measures to None if distance not set:
     if distance:
-        velocity = distance / duration
-        avg_step_length = number_of_steps / distance
-        avg_stride_length = avg_number_of_strides / distance
+        velocity = old_div(distance, duration)
+        avg_step_length = old_div(number_of_steps, distance)
+        avg_stride_length = old_div(avg_number_of_strides, distance)
     else:
         velocity = None
         avg_step_length = None

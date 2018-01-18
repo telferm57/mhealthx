@@ -12,6 +12,7 @@ Copyright 2015,  Sage Bionetworks (http://sagebase.org) Apache v2.0 License
 """
 
 
+from builtins import object
 def compute_tap_intervals(xtaps, t, threshold=20):
     """
     Compute tapping time series (tapping interval and tapping position).
@@ -149,7 +150,7 @@ def compute_drift(x, y):
     return drift
 
 
-class TapFeatures:
+class TapFeatures(object):
     """Class to add tap features."""
     # Initialize object method:
     def __init__(self):

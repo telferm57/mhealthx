@@ -15,8 +15,11 @@ Authors:
     - Soheil Bahrampour, August 2012
     - Arno Klein, 2015  (arno@sagebase.org)  http://binarybottle.com
 """
+from __future__ import division
 
 
+from builtins import range
+from past.utils import old_div
 def max_entropy_partition(data, number_of_symbols):
     """
     Perform maximum entropy partitioning on given data.
@@ -171,7 +174,7 @@ def analyze_symbol_sequence(symbols, number_of_states, morph_matrix_flag):
             morph_matrix[index2, index1] += 1
 
     # Normalize the computed vector:
-    pvec = pvec / np.sum(pvec)
+    pvec = old_div(pvec, np.sum(pvec))
 
     # Normalize each row of Matrix to make it a stochastic matrix:
     if morph_matrix_flag:

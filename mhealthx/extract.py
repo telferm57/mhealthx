@@ -8,8 +8,11 @@ Authors:
 Copyright 2015,  Sage Bionetworks (http://sagebase.org), Apache v2.0 License
 
 """
+from __future__ import print_function
 
 
+from builtins import str
+from builtins import range
 def make_row_table(file_path, table_stem, save_rows, row, row_data,
                    feature_row=None):
     """
@@ -191,7 +194,7 @@ def run_openSMILE(audio_file, command, flag1, flags, flagn, args, closing,
         except IOError as e:
             import traceback; traceback.print_exc()
             print("I/O error({0}): {1}".format(e.errno, e.strerror))
-            print("filename = ", argn)
+            print(("filename = ", argn))
         # Write feature row to a table or append to a feature table:
         else:
             feature_row, feature_table = make_row_table(argn, table_stem,

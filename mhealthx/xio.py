@@ -8,8 +8,10 @@ Authors:
 Copyright 2015,  Sage Bionetworks (http://sagebase.org), Apache v2.0 License
 
 """
+from __future__ import print_function
 
 
+from builtins import str
 def extract_synapse_rows(synapse_table, save_path=None, limit=None,
                          username='', password=''):
     """
@@ -81,9 +83,9 @@ def extract_synapse_rows(synapse_table, save_path=None, limit=None,
         rows = []
         row_files = []
         for irow, row in enumerate(results):
-            row_map = {col:row[i] for col,i in headers.iteritems()}
-            columns = row_map.keys()
-            values = [unicode(x) for x in row_map.values()]
+            row_map = {col:row[i] for col,i in headers.items()}
+            columns = list(row_map.keys())
+            values = [str(x) for x in list(row_map.values())]
             row_series = pd.Series(values, columns)
             if save_path:
                 csv_file = 'row{0}_v{1}_{2}'.format(row_map['ROW_ID'],

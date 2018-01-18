@@ -9,8 +9,12 @@ Authors:
 Copyright 2015,  Sage Bionetworks (http://sagebase.org), Apache v2.0 License
 
 """
+from __future__ import division
 
 
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 def compute_sample_rate(t):
     """
     Compute sample rate.
@@ -41,7 +45,7 @@ def compute_sample_rate(t):
     for tnext in t[1::]:
         deltas.append(tnext - tprev)
         tprev = tnext
-    sample_rate = 1 / np.mean(deltas)
+    sample_rate = old_div(1, np.mean(deltas))
 
     duration = t[-1] - t[0]
 
@@ -85,7 +89,7 @@ def butter_lowpass_filter(data, sample_rate, cutoff=10, order=4):
     from scipy.signal import butter, lfilter
 
     nyquist = 0.5 * sample_rate
-    normal_cutoff = cutoff / nyquist
+    normal_cutoff = old_div(cutoff, nyquist)
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
 
     y = lfilter(b, a, data)
@@ -183,7 +187,7 @@ def autocorrelate(data, unbias=2, normalize=2, plot_test=False):
 
     # Autocorrelation:
     coefficients = correlate(data, data, 'full')
-    coefficients = coefficients[coefficients.size/2:]
+    coefficients = coefficients[old_div(coefficients.size,2):]
     N = coefficients.size
 
     # Plot:
@@ -200,7 +204,7 @@ def autocorrelate(data, unbias=2, normalize=2, plot_test=False):
         if unbias == 1:
             coefficients /= (N - np.arange(N))
         elif unbias == 2:
-            coefficient_ratio = coefficients[0]/coefficients[-1]
+            coefficient_ratio = old_div(coefficients[0],coefficients[-1])
             coefficients /= np.linspace(coefficient_ratio, 1, N)
         else:
             raise IOError("unbias should be set to 1, 2, or None")
@@ -296,7 +300,7 @@ def compute_interpeak(data, sample_rate):
     from scipy.fftpack import rfft, fftfreq
 
     # Real part of FFT:
-    freqs = fftfreq(data.size, d=1.0/sample_rate)
+    freqs = fftfreq(data.size, d=old_div(1.0,sample_rate))
     f_signal = rfft(data)
 
     # Maximum non-zero frequency:
@@ -304,7 +308,7 @@ def compute_interpeak(data, sample_rate):
     freq = np.abs(freqs[imax_freq])
 
     # Inter-peak samples:
-    interpeak = np.int(np.round(sample_rate / freq))
+    interpeak = np.int(np.round(old_div(sample_rate, freq)))
 
     return interpeak
 
@@ -373,7 +377,7 @@ def root_mean_square(data):
 
     N = np.size(data)
     demeaned_data = data - np.mean(data)
-    rms = np.sqrt(np.sum(demeaned_data**2 / N))
+    rms = np.sqrt(np.sum(old_div(demeaned_data**2, N)))
 
     return rms
 
@@ -497,7 +501,7 @@ def compute_median_abs_dev(X, W=[], precision=1, c=1.0):
     if np.size(W):
         X = weighted_to_repeated_values(X, W, precision)
 
-    mad = np.median(np.abs(X - np.median(X))) / c
+    mad = old_div(np.median(np.abs(X - np.median(X))), c)
 
     return mad
 

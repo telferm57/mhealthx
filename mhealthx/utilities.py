@@ -8,8 +8,10 @@ Authors:
 Copyright 2015,  Sage Bionetworks (http://sagebase.org), Apache v2.0 License
 
 """
+from __future__ import print_function
 
 
+from builtins import zip
 def run_command(command, flag1='', arg1='', flags='', args=[],
                 flagn='', argn='', closing=''):
     """
@@ -63,7 +65,7 @@ def run_command(command, flag1='', arg1='', flags='', args=[],
 
     # Join flags with args:
     if type(flags) == list and type(args) == list:
-        flag_arg_tuples = zip(flags, args)
+        flag_arg_tuples = list(zip(flags, args))
         flags_args = ''
         for flag_arg_tuple in flag_arg_tuples:
             flags_args = ' '.join([flags_args, ' '.join(flag_arg_tuple)])
@@ -275,6 +277,6 @@ def create_directory(path):
     import os
     if not os.path.exists(path):
         os.makedirs(path)
-        print "Created directory: ", path
+        print("Created directory: ", path)
 
 

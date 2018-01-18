@@ -23,7 +23,7 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Intended Audience :: Science/Research",
                "License :: OSI Approved :: Apache v2.0",
                "Operating System :: OS Independent",
-               "Programming Language :: Python",
+               "Programming Language :: Python :: 2 :: Only",
                "Topic :: Scientific/Engineering"]
 
 description  = "feature extraction of mHealth data"
